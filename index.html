@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Para ti</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <input type="checkbox" id="abrir">
+  <input type="checkbox" id="sorpresa">
+
+  <!-- Nieve -->
+  <div class="nieve n1"></div>
+  <div class="nieve n2"></div>
+  <div class="nieve n3"></div>
+
+  <audio id="musica" src="musica.mp3" loop></audio>
+  <button id="mute">♪ música</button>
+
+  <div class="hint">OLA BELLA<small>ABRE EL SOBRE PERO EN FA</small></div>
+
+  <!-- Sobre -->
+  <label for="abrir" class="envelope">
+    <span class="back"></span>
+    <span class="letter"></span>
+    <span class="pocket"></span>
+    <span class="to">Para: mi vieja</span>
+    <span class="flap"></span>
+    <span class="seal">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </span>
+  </label>
+
+  <div id="modal">
+    <div class="card">
+      <label for="abrir" id="close">×</label>
+      <h2>Ya casi navidad, bella</h2>
+      <input type="radio" name="pestana" id="tv" checked>
+      <input type="radio" name="pestana" id="tf">
+      <input type="radio" name="pestana" id="ts">
+
+      <div class="tabs">
+        <label for="tv">video</label>
+        <label for="tf">fotos</label>
+        <label for="ts">???</label>
+      </div>
+
+      <div id="pVideo">
+        <div class="frame">
+          <video id="vid" src="navidad.mp4" playsinline controls preload="auto"></video>
+          <div class="nofile" id="nofile">ola por si ves esto xdxd<br>ola<b>loca</b>Te amo</div>
+          <div class="cap">Navidad 2025 · Te amooo</div>
+        </div>
+      </div>
+
+      <div id="pFotos">
+        <div class="frame">
+          <div class="visor">
+            <div class="carousel" id="carrusel"></div>
+            <button class="nav" id="prev">‹</button>
+            <button class="nav" id="next">›</button>
+          </div>
+          <div class="cap">nuestros momentos</div>
+        </div>
+        <div class="dots" id="puntos"></div>
+      </div>
+
+      <div id="pSorpresa">
+        <div class="misterio">
+          ñao lo abras nalgona...
+          <label for="sorpresa" class="boton-misterioso">?</label>
+          <small>:0</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="grande">
+    <label for="sorpresa" id="cerrarG">×</label>
+    <video id="vidGrande" src="sor.mp4" playsinline controls preload="auto"></video>
+    
+  </div>
+
+<script>
+
+  let fotos = ["1amor.jpeg", "2amor.jpeg", "3amor.jpeg", "4amor.jpeg", "5amor.jpeg", "6amor.jpeg"];
+
+  const abrir = document.getElementById('abrir');
+  const sorpresa = document.getElementById('sorpresa');
+  const musica = document.getElementById('musica');
+  const mute = document.getElementById('mute');
+  const vid = document.getElementById('vid');
+  const nofile = document.getElementById('nofile');
+  const vidGrande = document.getElementById('vidGrande');
+  const nofileG = document.getElementById('nofileG');
+  const tv = document.getElementById('tv');
+  const tf = document.getElementById('tf');
+  const ts = document.getElementById('ts');
+  const carrusel = document.getElementById('carrusel');
+  const puntos = document.getElementById('puntos');
+
+  abrir.onchange = () => {
+    if (abrir.checked) {
+      musica.play().catch(() => {});
+      mute.style.display = 'block';
+      tv.checked = true;
+      setTimeout(() => {
+        if (!abrir.checked) return;
+        vid.currentTime = 0;
+        vid.play().catch(() => {});
+      }, 1500);
+    } else {
+      vid.pause();
+    }
+  };
+
+  vid.onplay = () => { musica.volume = 0.12; };
+  vid.onpause = vid.onended = () => { musica.volume = 1; };
+  mute.onclick = () => {
+    musica.muted = !musica.muted;
+    mute.classList.toggle('off', musica.muted);
+  };
+
+  vid.onerror = () => { vid.style.display = 'none'; nofile.style.display = 'block'; };
+
+  sorpresa.onchange = () => {
+    if (sorpresa.checked) {
+      vid.pause();
+      vidGrande.currentTime = 0;
+      vidGrande.play().catch(() => {});
+    } else {
+      vidGrande.pause();
+    }
+  };
+  vidGrande.onplay = () => { musica.volume = 0.12; };
+  vidGrande.onpause = vidGrande.onended = () => { musica.volume = 1; };
+  vidGrande.onerror = () => { vidGrande.style.display = 'none'; nofileG.style.display = 'block'; };
+  ts.onchange = () => { vid.pause(); };
+
+  const vacia = "data:image/svg+xml;utf8," + encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500'><rect width='100%' height='100%' fill='#efe6d2'/><text x='50%' y='52%' font-size='22' fill='#8a7a68' text-anchor='middle' font-family='cursive'>pon tu foto aquí</text></svg>");
+  let i = 0;
+
+  function render() {
+    carrusel.innerHTML = '';
+    puntos.innerHTML = '';
+    fotos.forEach((src, n) => {
+      const img = new Image();
+      img.src = src;
+      img.onerror = () => { img.src = vacia; };
+      carrusel.appendChild(img);
+      const p = document.createElement('span');
+      p.onclick = () => ir(n);
+      puntos.appendChild(p);
+    });
+    ir(0);
+  }
+
+  function ir(n) {
+    i = (n + fotos.length) % fotos.length;
+    carrusel.scrollTo({ left: i * carrusel.clientWidth, behavior: 'smooth' });
+    marcar();
+  }
+
+  function marcar() {
+    [...puntos.children].forEach((p, k) => p.classList.toggle('on', k === i));
+  }
+
+  carrusel.onscroll = () => {         
+    if (!carrusel.clientWidth) return;
+    i = Math.round(carrusel.scrollLeft / carrusel.clientWidth);
+    marcar();
+  };
+  document.getElementById('prev').onclick = () => ir(i - 1);
+  document.getElementById('next').onclick = () => ir(i + 1);
+  tf.onchange = () => { vid.pause(); ir(0); };
+  setInterval(() => { if (tf.checked) ir(i + 1); }, 4000);
+
+  render();
+</script>
+</body>
+</html>
